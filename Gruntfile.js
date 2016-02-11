@@ -41,6 +41,7 @@ module.exports = function(grunt) {
     eslint: {
       target: [
         // Add list of files to lint here
+        'public/client/**/*.js'
       ]
     },
 
@@ -66,6 +67,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -94,10 +96,13 @@ module.exports = function(grunt) {
 
 
   grunt.registerTask('upload', function(n) {
+      console.log(grunt.option('prod'));
     if (grunt.option('prod')) {
       // add your production server task here
+      grunt.task.run(['shell:prodServer']);
+    } else {
+      grunt.task.run([ 'server-dev' ]);
     }
-    grunt.task.run([ 'server-dev' ]);
   });
 
   ////////////////////////////////////////////////////
@@ -109,21 +114,25 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-  ]);
-
-  grunt.registerTask('upload', function(n) {
-    if (grunt.option('prod')) {
-      // add your production server task here
-    } else {
-      grunt.task.run([ 'server-dev' ]);
-    }
-  });
-
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
+    'eslint',
+    // 'test',
     'concat',
     'uglify'
   ]);
+
+  grunt.registerTask('deploy', [
+    // add your deploy tasks here
+    'build',
+    'upload'
+  ]);
+
+// grunt.registerTask('deploy', function(n) {
+//     if (grunt.option('prod')) {
+//       // add your production server task here
+//       grunt.task.run(['build', 'shell']);
+//     }
+//     grunt.task.run(['build', 'server-dev' ]);
+//   });
 
 
 };
